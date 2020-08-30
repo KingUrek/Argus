@@ -1,27 +1,34 @@
 {
-  "name": "Github-trybe-bot",
+  "name": "Gilgamesh",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:server": "tsnd --respawn --transpile-only index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@octokit/core": "^3.1.2",
+    "@octokit/webhooks": "^7.11.2",
     "axios": "^0.20.0",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "inquirer": "^7.3.3",
     "lodash": "^4.17.20",
-    "nodemon": "^2.0.4",
     "pdf-parse": "^1.1.1"
   },
   "devDependencies": {
+    "@types/express": "^4.17.7",
+    "@typescript-eslint/eslint-plugin": "^3.10.1",
+    "@typescript-eslint/parser": "^3.10.1",
     "eslint": "^7.7.0",
     "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.22.0"
+    "eslint-plugin-import": "^2.22.0",
+    "ts-node-dev": "^1.0.0-pre.61",
+    "typescript": "^4.0.2"
   }
 }
