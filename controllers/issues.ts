@@ -1,7 +1,12 @@
-const { closeIssue } = require('../models/issues');
+// eslint-disable-next-line no-unused-vars
+import { Request } from 'express';
+import config from '../config';
+import { closeIssue } from '../models/issues';
 
 class Issues {
-  constructor(issues) {
+  issues:RegExpExecArray[]
+
+  constructor(issues:RegExpExecArray[]) {
     this.issues = issues;
   }
 
@@ -10,20 +15,21 @@ class Issues {
   }
 }
 
-function findIssues(phrase, regex = /\$closes (\d+)/gm) {
+function findIssues(phrase:string, regex = /\$closes (\d+)/gm) {
   let matchs;
   const issues = [];
+  // eslint-disable-next-line no-cond-assign
   while (matchs = regex.exec(phrase)) {
     issues.push(matchs);
   }
   return new Issues(issues);
 }
 
-function closeIssues(req, res) {
+function closeIssues(req:Request) {
   // TODO: transformar o token de close para um token genérico que pode ser configurado
   const { pull_request: pullRequest, action } = req.body;
   const comment = pullRequest.body;
-  if (comment.includes('$closes') && action === 'closed') {
+  if (comment.includes(config.token) && action === 'closed') {
     const issues = findIssues(comment).numbers;
     issues.forEach((iNumber) => {
       closeIssue(iNumber);
@@ -31,4 +37,4 @@ function closeIssues(req, res) {
   }
 }
 
-module.exports = { closeIssues };
+export default { closeIssues };

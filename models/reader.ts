@@ -2,11 +2,14 @@ const fs = require('fs');
 const pdf = require('pdf-parse');
 
 const FILE_PATH = '/home/gabriel/Projetos/Github-trybe-bot/static/[APRENDIZAGEM - 1Ago20] Sprint 17 - Back End is Back (alright).pdf';
-function parse(acc, el) {
+interface IAct {
+  title:string, body:string
+}
+function parse(acc: IAct[], el: string) {
   if (+el[0]) {
     let [title, body] = el.split(':');
     [, title] = title.split('.');
-    const act = {
+    const act:IAct = {
       title, body: body.trim(),
     };
     return acc.concat(act);
@@ -16,7 +19,7 @@ function parse(acc, el) {
   return acc;
 }
 
-async function getActions(filePath) {
+async function getActions(filePath:string) {
   // TODO: Transformar o FILE_PATH em upload
   const dataBuffer = fs.readFileSync(filePath || FILE_PATH);
 
@@ -28,11 +31,11 @@ async function getActions(filePath) {
   let actionFound;
 
   do {
-    actionIndex = lines.findIndex((r) => r === 'Ações');
+    actionIndex = lines.findIndex((r:string) => r === 'Ações');
     lines = lines.slice(actionIndex + 1);
-    const endIndex = lines.findIndex((r) => !r);
+    const endIndex = lines.findIndex((r:string) => !r);
     actions.push(...lines.slice('_', endIndex));
-    actionIndex = lines.slice(endIndex).findIndex((r) => r === 'Ações');
+    actionIndex = lines.slice(endIndex).findIndex((r:string) => r === 'Ações');
     actionFound = (actionIndex !== -1);
   } while (actionFound);
   return actions.reduce(parse, []);

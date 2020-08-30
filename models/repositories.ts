@@ -3,7 +3,7 @@ const userModel = require('./user');
 
 const REPO_LINK = 'https://api.github.com/user/repos';
 
-async function getRepositories(user, authenticated) {
+async function getRepositories(user:string, authenticated?:boolean) {
   if (authenticated) {
     userModel.authUser(user);
   }
@@ -12,10 +12,10 @@ async function getRepositories(user, authenticated) {
 
   try {
     const { data } = await axios.get(REPO_LINK, options);
-    // data.forEach(({ name }) => console.log(name));
     return data;
   } catch (error) {
     // TODO: Tratar erro de forma adequeada
+    // eslint-disable-next-line no-console
     return console.log(error);
   }
 }
