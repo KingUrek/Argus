@@ -25,9 +25,12 @@ function findIssues(phrase:string, regex = /\$closes (\d+)/gm) {
   return new Issues(issues);
 }
 
-function closeIssues(req:Request) {
-  // TODO: transformar o token de close para um token genérico que pode ser configurado
-  const { pull_request: pullRequest, action } = req.body;
+/**
+ * This function closes a issue when the pull request is merged if the pull resquest is monitored
+ *
+ */
+function closeIssues(hook:any) {
+  const { pull_request: pullRequest, action } = hook;
   const comment = pullRequest.body;
   if (comment.includes(config.token) && action === 'closed') {
     const issues = findIssues(comment).numbers;
