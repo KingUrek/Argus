@@ -15,7 +15,7 @@ export function checkTracker(comment:string) {
 * being monitored by the program
 * @param {string} hook - The hook response from Github.
 */
-export function setTracker(hook: any) {
+export async function setTracker(hook: any) {
   // TODO: Change the hooktype for a proper type
   try {
     const { body: comment, number } = hook.pull_request;
@@ -23,7 +23,7 @@ export function setTracker(hook: any) {
     const [owner, repo] = fullName.split('/');
     const body = `${comment} **(Monitored By ${config.name})** `;
     if (checkTracker(comment) && !comment.includes(`(Monitored By ${config.name})`)) {
-      octokit.request('PATCH /repos/:owner/:repo/pulls/:pull_number', {
+      await octokit.request('PATCH /repos/:owner/:repo/pulls/:pull_number', {
         owner,
         repo,
         pull_number: number,
