@@ -1,13 +1,28 @@
 pipeline {
   agent any
+    
+  tools {nodejs "nodejs"}
+    
   stages {
-    stage('Integration Tests') {
+        
+    stage('Cloning Argus') {
       steps {
-        tool(name: 'nodejs', type: 'nodejs')
-        sh 'npm test'
-        sh 'echo "Os testes passaram com sucesso!"'
+        git 'https://github.com/KingUrek/Argus'
       }
     }
-
+        
+    stage('Install dependencies') {
+      steps {
+        sh 'npm install'
+      }
+    }
+     
+    stage('Test') {
+      steps {
+         sh 'npm test'
+      }
+    }
+    
   }
+   
 }
