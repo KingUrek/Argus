@@ -1,4 +1,4 @@
-import payloads from "./data/PrEditedPayload";
+import payloads from "./data/PrCreatedPayload";
 import nock from "nock";
 import Loggers from "../models/loggers";
 
@@ -49,3 +49,4 @@ describe("Test if when a pull request hook is send, the function make a http req
     expect(nock.isDone()).toBeFalsy();
   });
 });
+

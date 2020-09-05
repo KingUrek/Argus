@@ -55,6 +55,8 @@ export async function closeIssuewithLogger(payload:any) {
 
       const issueData = await Promise.all(issues.map(async (issue: string) => {
         // Get issue Link
+        // TODO: Para gerar o link da issue, provavelmente essa etapa
+        // é apenas uma requisição extra e desnecessária.
         const { html_url: issueLink, title } = (await octokit.request('GET /repos/:owner/:repo/issues/:issue_number', {
           owner,
           repo,
@@ -65,7 +67,7 @@ export async function closeIssuewithLogger(payload:any) {
         await closeIssue(issue);
 
         // Post a comment on the issue that was closed by automation
-        const issueMessage = `Essa issUE foi fechada pela automatização ${config.name}`;
+        const issueMessage = `Essa issue foi fechada pela automatização ${config.name}`;
         await octokit.request('POST /repos/:owner/:repo/issues/:issue_number/comments', {
           owner,
           repo,
