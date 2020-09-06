@@ -4,36 +4,59 @@ import octokit from '../services/octokit';
 import { closeIssue, findIssues } from '../models/issues';
 
 /**
- * Checks if the pull_request must be tracked
+ * Checks if the pull request have a valid tracker token.
  * @param {string} comment
  */
-export function checkTracker(comment:string) {
-  return comment.includes(config.token);
+export function checkTracker(comment: string):Boolean {
+  // TODO: I don't like this functions, find a way to make it better
+
+  const tokens = Object.values(config.tokens);
+  return tokens.some((token) => comment.includes(token));
 }
 
-/** The `setTracker` function adds a call sign to the PR description to say that the pr is
-* being monitored by the program
-* @param {string} hook - The hook response from Github.
+interface ItrackerType{
+  'pullrequest':string,
+  'issue':string
+}
+
+/** The `setTracker` function adds a call sign to the PR or issue description to say that that is
+* been monitored by Argus.
+* @params {any} hook : the github payload.
+* @params type: the type of tracker ( PR or Issue )
 */
-export async function setTracker(hook: any) {
+export async function setTracker(hook: any, type: keyof ItrackerType = 'pullrequest') {
   // TODO: Change the hooktype for a proper type
-  try {
-    const { body: comment, number } = hook.pull_request;
-    const { full_name: fullName } = hook.repository;
-    const [owner, repo] = fullName.split('/');
-    const body = `${comment} **(Monitored By ${config.name})** `;
-    if (checkTracker(comment) && !comment.includes(`(Monitored By ${config.name})`)) {
-      await octokit.request('PATCH /repos/:owner/:repo/pulls/:pull_number', {
-        owner,
-        repo,
-        pull_number: number,
-        body,
-      });
-    }
-  } catch (error) {
-    // TODO: Add a error handler
-    console.error(error);
+  // try {
+
+  // Get if the type is pullrequest or issue
+  let endpoint = 'PATCH /repos/:owner/:repo/pulls/:pull_number';
+  let key = 'pull_request';
+  let field = 'pull_number';
+  if (type === 'issue') {
+    endpoint = 'PATCH /repos/:owner/:repo/issues/:issue_number';
+    key = 'issue';
+    field = 'issue_number';
   }
+
+  // Get information about the hook
+  const { body: comment, number } = hook[key];
+  const { full_name: fullName } = hook.repository;
+  const [owner, repo] = fullName.split('/');
+
+  const body = `${comment} **(Monitored By ${config.name})** `;
+
+  if (checkTracker(comment) && !comment.includes(`(Monitored By ${config.name})`)) {
+    await octokit.request(endpoint, {
+      owner,
+      repo,
+      [field]: number,
+      body,
+    });
+  }
+  // } catch (error) {
+  //   // TODO: Add a error handler
+  //   console.error(error);
+  // }
 }
 
 /**
@@ -50,7 +73,7 @@ export async function closeIssuewithLogger(payload:any) {
     // Get issue to close information
     const { pull_request: pullRequest } = payload;
     const comment = pullRequest.body;
-    if (comment.includes(config.token)) {
+    if (comment.includes(config.tokens.close)) {
       const issues = (await findIssues(comment)).numbers;
 
       const issueData = await Promise.all(issues.map(async (issue: string) => {

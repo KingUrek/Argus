@@ -1,6 +1,9 @@
 const config = {
   name: 'Argus',
-  token: '$closes',
+  tokens: {
+    monitored: '$monitored',
+    close: '$closes',
+  },
   owner: 'Mechanical-Men',
   repo: 'novo-repo-das-crian-a',
 

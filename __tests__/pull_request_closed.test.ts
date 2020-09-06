@@ -2,6 +2,9 @@ import payloads from "./data/PrClosedPayload";
 import nock from "nock";
 import Loggers from "../models/loggers";
 
+//TODO: Refactor this test. This test makes more sense if this is a server teste than a funciton test,
+// the unit test fom setTracker is better be done in another file 
+
 nock.disableNetConnect();
 
 const { rightPayload, wrongPayload } = payloads;
@@ -40,3 +43,4 @@ describe("Test if when a pull request hook is send, the function make a http req
     expect(nock.isDone()).toBeTruthy();
   });
 });
+
